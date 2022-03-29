@@ -1,0 +1,37 @@
+﻿@page
+@model PubSubManager.Pages.TopicModel
+@{
+
+}
+
+<h1><i class="fa-solid fa-newspaper"></i> @Model.Topic.Name</h1>
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <p>Subscriptions:</p>
+            <form asp-page-handler="newsub" method="post">
+                <input type="hidden" value=@Model.Topic.TopicName.TopicId name="parenttopic">
+                <p>
+                    Sub name: <input type="text" name="newsub" /> <input type="submit" class="btn btn-primary" value="New subscription" />
+                </p>
+            </form>
+            <ul>
+                @foreach (var sub in this.Model.Subscriptions.OrderBy(s => s.Name))
+                {
+                    <li><i class="fa-solid fa-inbox"></i> @sub.Name <a asp-page="./Sub" asp-route-SubId="@sub.SubscriptionName.SubscriptionId"><i class="fa-solid fa-circle-arrow-right"></i></a></li>
+                }
+            </ul>
+        </div>
+        <div class="col">
+            <p>Send new message to a topic:</p>
+            <form asp-page-handler="newmessage" method="post">
+                <textarea rows="10" class="form-control" style="min-width: 90%" placeholder="Message to be pushed" name="newmessage"></textarea>
+                <input type="hidden" name="topicid" value=@Model.Topic.TopicName.TopicId />
+                <p>
+                    <input type="submit" class="btn btn-primary" value="Send message" />
+                </p>
+            </form>
+        </div>
+    </div>
+</div>

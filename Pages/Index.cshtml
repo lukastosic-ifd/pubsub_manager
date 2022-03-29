@@ -1,0 +1,50 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">PubSub Manager</h1>
+</div>
+
+<h1>Topics</h1>
+<form asp-page-handler="newtopic" method="post">
+    <p>
+        Topic name: <input type="text" name="newtopic" /> <input type="submit" class="btn btn-primary" value="New topic" />
+    </p>
+</form>
+<div class="container">
+
+
+    @foreach (var topic in this.Model.Topics.OrderBy(t => t.Name))
+    {
+
+        <div class="row">
+            <div class="col">
+                <h2><i class="fa-solid fa-newspaper"></i> @topic.Name <a asp-page="./Topic" asp-route-TopicId="@topic.TopicName.TopicId"><i class="fa-solid fa-circle-arrow-right"></i></a></h2>
+                <p>Subscriptions:</p>
+                <ul class="list-group">
+                    @foreach (var sub in this.Model.Subscriptions.OrderBy(s => s.Name))
+                    {
+                        if (sub.Topic == topic.Name)
+                        {
+                            <li class="list-group-item"><i class="fa-solid fa-inbox"></i> @sub.Name <a asp-page="./Sub" asp-route-SubId="@sub.SubscriptionName.SubscriptionId"><i class="fa-solid fa-circle-arrow-right"></i></a></li>
+                        }
+                    }
+                </ul>
+            </div>
+            <div class="col">
+                <form asp-page-handler="newsub" method="post">
+                    <input type="hidden" value=@topic.TopicName.TopicId name="parenttopic">
+                    <p>
+                        Sub name: <input type="text" name="newsub" /> <input type="submit" class="btn btn-primary" value="New subscription" />
+                    </p>
+                </form>
+            </div>
+        </div>
+    }
+</div>
+
+
+

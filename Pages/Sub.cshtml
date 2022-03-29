@@ -1,0 +1,97 @@
+﻿@page
+@model PubSubManager.Pages.SubModel
+@{
+
+}
+
+<h1><i class="fa-solid fa-inbox"></i> @Model.Subscription.Name</h1>
+
+@if(Model.NumberOfMessages > 0)
+{
+    <div class="alert alert-danger" role="alert">
+        Could not send @Model.NumberOfMessages messages as events.
+    </div>
+}
+
+@if(Model.NumberOfMessages == 0)
+{
+    <div class="alert alert-warning" role="alert">
+        No messages found on sub to be sent as an event.
+    </div>
+}
+
+@if(Model.NumberOfMessages == -1)
+{
+    <div class="alert alert-success" role="alert">
+        All messages are sent as events.
+    </div>
+}
+
+
+@if(Model.SuccessSingleEvent == 1)
+{
+     <div class="alert alert-success" role="alert">
+        Message successfuly pushed as an event.
+    </div>
+}
+
+@if(Model.SuccessSingleEvent == 2)
+{
+     <div class="alert alert-danger" role="alert">
+        Error pushing message as an event.
+    </div>
+}
+
+
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <form asp-page-handler="fetchmessages" method="post">
+                <input type="hidden" value="@Model.SubId" name="subid" />
+                <p>Fetch for: <input type="text" name="time" value="5" /> seconds. ACK <input type="checkbox" name="autoack" /> <input type="submit" class="btn btn-primary" value="Fetch" /></p>
+                    
+            </form>
+            <p></p>
+            <hr />
+            <p></p>
+            <form asp-page-handler="messagestoevents" method="post">
+                <input type="hidden" value="@Model.SubId" name="subid" />
+                <p>Generate events for: <input type="text" name="time" value="5" /> seconds. <input type="submit" class="btn btn-primary" value="Generate" /></p>
+            </form>
+        </div>
+        <div class="col">
+            <form asp-page-handler="singleevent" method="post">
+                <textarea rows="5" class="form-control" style="min-width: 90%" placeholder="Message to be pushed" name="eventmessage"></textarea>
+                <input type="hidden" value="@Model.SubId" name="subid" />
+                <input type="submit" class="btn btn-primary" value="Send event" />
+
+            </form>
+        </div>
+    </div>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <td>Info</td>
+            <td>Content</td>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var message in Model.Messages)
+        {
+            <tr>
+                <td>
+                    <div>@message.MessageId</div><br />
+                    <div>@message.PublishTime.ToDateTime().ToString("yyyy-MM-dd")</div>
+                </td>
+                <td>
+                    @System.Text.Encoding.UTF8.GetString(message.Data.ToArray())
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+

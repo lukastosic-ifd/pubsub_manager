@@ -1,0 +1,23 @@
+﻿@page
+@model PubSubManager.Pages.SettingsModel
+@{
+   ViewData["Title"] = "Settings";
+}
+
+<form asp-page-handler="savesettings" method="post">
+    <p>
+       Project name: <input type="text" asp-for="ConfigService.ProjectName" name="newproject" />
+    </p>
+    <p>
+        Emulator: <input type="checkbox" asp-for="ConfigService.Emulator" name="newemulator"/>
+    </p>
+    <p>
+        Emulator URL: <input type="text" asp-for="ConfigService.EmulatorUrl" name="newemulatorurl"/>
+    </p>
+    <p>
+        Event destination URL: <input type="text" asp-for="ConfigService.EventDestinationUrl" name="newdestinationurl"/>
+    </p>
+    <p>
+        <input type="submit" class="btn btn-primary" value="Save changes" />
+    </p>
+</form> 
