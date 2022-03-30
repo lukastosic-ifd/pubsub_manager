@@ -13,13 +13,33 @@
             <form asp-page-handler="newsub" method="post">
                 <input type="hidden" value=@Model.Topic.TopicName.TopicId name="parenttopic">
                 <p>
-                    Sub name: <input type="text" name="newsub" /> <input type="submit" class="btn btn-primary" value="New subscription" />
+                    Sub name: <input type="text" name="newsub" /> <input type="submit" class="btn btn-primary" value="New PULL subscription" />
                 </p>
             </form>
-            <ul>
+            <p></p>
+             <form asp-page-handler="newpushsub" method="post">
+                    <input type="hidden" value=@Model.Topic.TopicName.TopicId name="parenttopic">
+                    <p>
+                        Sub name: <input type="text" name="newpushsub" />  <input type="submit" class="btn btn-primary" value="New PUSH subscription" />
+                    </p>
+                </form>
+            <ul class="list-group">
                 @foreach (var sub in this.Model.Subscriptions.OrderBy(s => s.Name))
                 {
-                    <li><i class="fa-solid fa-inbox"></i> @sub.Name <a asp-page="./Sub" asp-route-SubId="@sub.SubscriptionName.SubscriptionId"><i class="fa-solid fa-circle-arrow-right"></i></a></li>
+                    <li class="list-group-item">
+                        <form asp-page-handler="deletesub" method="post">
+                            <input type="hidden" value=@sub.SubscriptionName.SubscriptionId name="subid"/>
+                            <input type="hidden" value=@Model.TopicId name="topicid" />
+                            <input type="submit" class="btn btn-outline-danger btn-sm" value="Delete" />
+                        </form>
+                        <i class="fa-solid fa-inbox"></i> 
+                        @sub.Name 
+                        <a asp-page="./Sub" asp-route-SubId="@sub.SubscriptionName.SubscriptionId"><i class="fa-solid fa-circle-arrow-right"></i></a>
+                        @if (!string.IsNullOrWhiteSpace(sub.PushConfig.PushEndpoint))
+                            {
+                                <span class="badge bg-secondary">Push</span>
+                            }
+                    </li>
                 }
             </ul>
         </div>
@@ -32,6 +52,7 @@
                     <input type="submit" class="btn btn-primary" value="Send message" />
                 </p>
             </form>
+            
         </div>
     </div>
 </div>

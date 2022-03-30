@@ -18,27 +18,44 @@ namespace PubSubManager.Pages
         public IndexModel(ILogger<IndexModel> logger, PubSubService pubSubService)
         {
             _logger = logger;
-
             this.pubSubService = pubSubService;
-
-            Topics = this.pubSubService.ListProjectTopics();
-            Subscriptions = this.pubSubService.ListProjectSubscriptions();
-            
         }
 
         public void OnGet()
         {
-
+            Topics = this.pubSubService.ListProjectTopics();
+            Subscriptions = this.pubSubService.ListProjectSubscriptions();
         }
 
         public void OnPostNewTopic(string newtopic)
         {
-            Topics.Add(this.pubSubService.CreateTopic(newtopic));
+            this.pubSubService.CreateTopic(newtopic);
+            OnGet();
         }
 
-        public void OnPostNewSub(string newsub, string parenttopic)
+        public void OnPostNewSub(string newsub, string parenttopic, bool pushtype)
         {
-            Subscriptions.Add(this.pubSubService.CreateSubscription(parenttopic, newsub));
+            this.pubSubService.CreateSubscription(parenttopic, newsub);
+            OnGet();
         }
+
+        public void OnPostNewPushSub(string newsub, string parenttopic)
+        {
+            this.pubSubService.CreatePushSubscription(parenttopic, newsub);
+            OnGet();
+        }
+
+        public void OnPostDeleteTopic(string topicid)
+        {
+            this.pubSubService.DeleteTopic(topicid);
+            OnGet();
+        }
+
+        public void OnPostDeleteSub(string subid)
+        {
+            this.pubSubService.DeleteSubscription(subid);
+            OnGet();
+        }
+
     }
 }

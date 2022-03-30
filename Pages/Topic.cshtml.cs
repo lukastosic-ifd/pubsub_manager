@@ -22,6 +22,7 @@ namespace PubSubManager.Pages
 
         private void FindTopic(string topic)
         {
+            TopicId = topic;
             if (string.IsNullOrWhiteSpace(TopicId))
             {
                 return;
@@ -55,6 +56,24 @@ namespace PubSubManager.Pages
             }
             this.TopicId = topicid;
             OnGet();
+        }
+
+        public void OnPostNewSub(string newsub, string parenttopic)
+        {
+            this.pubSubService.CreateSubscription(parenttopic, newsub);
+            FindTopic(parenttopic);            
+        }
+
+        public void OnPostNewPushSub(string newpushsub, string parenttopic)
+        {
+            FindTopic(parenttopic);
+            Subscriptions.Add(this.pubSubService.CreatePushSubscription(parenttopic, newpushsub));
+        }
+
+        public void OnPostDeleteSub(string subid, string topicid)
+        {
+            this.pubSubService.DeleteSubscription(subid);
+            FindTopic(topicid);
         }
     }
 }

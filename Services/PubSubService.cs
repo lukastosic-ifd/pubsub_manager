@@ -70,6 +70,31 @@ namespace PubSubManager.Services
             return subs.ToList();
         }
 
+        public Subscription CreatePushSubscription(string topicId, string subscriptionId)
+        {
+            TopicName topicName = TopicName.FromProjectTopic(configService.ProjectName, topicId);
+
+            SubscriptionName subscriptionName = SubscriptionName.FromProjectSubscription(configService.ProjectName, subscriptionId);
+            Subscription subscription = null;
+
+            PushConfig pushConfiguration = new PushConfig()
+            {
+                PushEndpoint = configService.EventDestinationUrl
+                
+            };
+
+            try
+            {               
+                
+                subscription = this.subscriberClient.CreateSubscription(subscriptionName, topicName, pushConfig: pushConfiguration, ackDeadlineSeconds: 600);
+            }
+            catch (RpcException e) when (e.Status.StatusCode == StatusCode.AlreadyExists)
+            {
+                // Already exists.  That's fine.
+            }
+            return subscription;
+        }
+
         public Subscription CreateSubscription(string topicId, string subscriptionId)
         {
             TopicName topicName = TopicName.FromProjectTopic(configService.ProjectName, topicId);
@@ -86,6 +111,40 @@ namespace PubSubManager.Services
                 // Already exists.  That's fine.
             }
             return subscription;
+        }
+
+        public bool DeleteTopic(string topicId)
+        {
+            TopicName topicName = TopicName.FromProjectTopic(configService.ProjectName, topicId);
+            try
+            {
+                publisherClient.DeleteTopic(topicName);
+                return true;
+            }
+            catch (RpcException e) when (e.Status.StatusCode == StatusCode.NotFound)
+            {
+                return true;
+                // Already removed. That's fine.
+            }
+            return false;
+        }
+
+
+        public bool DeleteSubscription(string subscriptionId)
+        {
+            SubscriptionName subscriptionName = SubscriptionName.FromProjectSubscription(configService.ProjectName, subscriptionId);
+           
+            try
+            {
+                this.subscriberClient.DeleteSubscription(subscriptionName);
+                return true;
+            }
+            catch (RpcException e) when (e.Status.StatusCode == StatusCode.NotFound)
+            {
+                return true;
+                // Already removed. That's fine.
+            }
+            return false;
         }
 
         public async Task<int> PublishMessagesAsync(string topicId, IEnumerable<string> messages)

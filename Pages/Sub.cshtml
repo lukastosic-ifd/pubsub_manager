@@ -4,23 +4,27 @@
 
 }
 
-<h1><i class="fa-solid fa-inbox"></i> @Model.Subscription.Name</h1>
+<h1><i class="fa-solid fa-inbox"></i> @Model.Subscription.Name @if (!string.IsNullOrWhiteSpace(Model.Subscription.PushConfig.PushEndpoint))
+    {
+        <span class="badge bg-secondary">Push</span>
+    }
+</h1>
 
-@if(Model.NumberOfMessages > 0)
+@if (Model.NumberOfMessages > 0)
 {
     <div class="alert alert-danger" role="alert">
         Could not send @Model.NumberOfMessages messages as events.
     </div>
 }
 
-@if(Model.NumberOfMessages == 0)
+@if (Model.NumberOfMessages == 0)
 {
     <div class="alert alert-warning" role="alert">
         No messages found on sub to be sent as an event.
     </div>
 }
 
-@if(Model.NumberOfMessages == -1)
+@if (Model.NumberOfMessages == -1)
 {
     <div class="alert alert-success" role="alert">
         All messages are sent as events.
@@ -28,16 +32,16 @@
 }
 
 
-@if(Model.SuccessSingleEvent == 1)
+@if (Model.SuccessSingleEvent == 1)
 {
-     <div class="alert alert-success" role="alert">
+    <div class="alert alert-success" role="alert">
         Message successfuly pushed as an event.
     </div>
 }
 
-@if(Model.SuccessSingleEvent == 2)
+@if (Model.SuccessSingleEvent == 2)
 {
-     <div class="alert alert-danger" role="alert">
+    <div class="alert alert-danger" role="alert">
         Error pushing message as an event.
     </div>
 }
@@ -47,18 +51,27 @@
 <div class="container">
     <div class="row">
         <div class="col">
-            <form asp-page-handler="fetchmessages" method="post">
-                <input type="hidden" value="@Model.SubId" name="subid" />
-                <p>Fetch for: <input type="text" name="time" value="5" /> seconds. ACK <input type="checkbox" name="autoack" /> <input type="submit" class="btn btn-primary" value="Fetch" /></p>
-                    
-            </form>
-            <p></p>
-            <hr />
-            <p></p>
-            <form asp-page-handler="messagestoevents" method="post">
-                <input type="hidden" value="@Model.SubId" name="subid" />
-                <p>Generate events for: <input type="text" name="time" value="5" /> seconds. <input type="submit" class="btn btn-primary" value="Generate" /></p>
-            </form>
+            @if (string.IsNullOrWhiteSpace(Model.Subscription.PushConfig.PushEndpoint))
+            {
+
+                <form asp-page-handler="fetchmessages" method="post">
+                    <input type="hidden" value="@Model.SubId" name="subid" />
+                    <p>Fetch for: <input type="text" name="time" value="5" /> seconds. ACK <input type="checkbox" name="autoack" /> <input type="submit" class="btn btn-primary" value="Fetch" /></p>
+
+                </form>
+
+                <p></p>
+                <hr />
+                <p></p>
+                <form asp-page-handler="messagestoevents" method="post">
+                    <input type="hidden" value="@Model.SubId" name="subid" />
+                    <p>Generate events for: <input type="text" name="time" value="5" /> seconds. <input type="submit" class="btn btn-primary" value="Generate" /></p>
+                </form>
+            }
+            else
+            {
+                <p>Cannot fetch messages - this is PUSH subscription.</p>
+            }
         </div>
         <div class="col">
             <form asp-page-handler="singleevent" method="post">

@@ -22,14 +22,31 @@
 
         <div class="row">
             <div class="col">
-                <h2><i class="fa-solid fa-newspaper"></i> @topic.Name <a asp-page="./Topic" asp-route-TopicId="@topic.TopicName.TopicId"><i class="fa-solid fa-circle-arrow-right"></i></a></h2>
+                <form asp-page-handler="deletetopic" method="post">
+                    <input type="hidden" value=@topic.TopicName.TopicId name="topicid" />
+                    <input type="submit" class="btn btn-outline-danger btn-sm" value="Delete topic" />
+                </form>
+                <h2><i class="fa-solid fa-newspaper"></i> @topic.Name <a asp-page="./Topic" asp-route-TopicId="@topic.TopicName.TopicId"><i class="fa-solid fa-circle-arrow-right"></i></a></h2>     
                 <p>Subscriptions:</p>
                 <ul class="list-group">
                     @foreach (var sub in this.Model.Subscriptions.OrderBy(s => s.Name))
                     {
                         if (sub.Topic == topic.Name)
                         {
-                            <li class="list-group-item"><i class="fa-solid fa-inbox"></i> @sub.Name <a asp-page="./Sub" asp-route-SubId="@sub.SubscriptionName.SubscriptionId"><i class="fa-solid fa-circle-arrow-right"></i></a></li>
+
+
+                            <li class="list-group-item">
+                                <form asp-page-handler="deletesub" method="post">
+                                    <input type="hidden" value=@sub.SubscriptionName.SubscriptionId name="subid" />
+                                    <input type="submit" class="btn btn-outline-danger btn-sm" value="Delete sub" />
+                                </form>
+                                <i class="fa-solid fa-inbox"></i> @sub.Name
+                                <a asp-page="./Sub" asp-route-SubId="@sub.SubscriptionName.SubscriptionId"><i class="fa-solid fa-circle-arrow-right"></i></a>
+                                @if (!string.IsNullOrWhiteSpace(sub.PushConfig.PushEndpoint))
+                                {
+                                    <span class="badge bg-secondary">Push</span>
+                                }
+                            </li>
                         }
                     }
                 </ul>
@@ -38,7 +55,14 @@
                 <form asp-page-handler="newsub" method="post">
                     <input type="hidden" value=@topic.TopicName.TopicId name="parenttopic">
                     <p>
-                        Sub name: <input type="text" name="newsub" /> <input type="submit" class="btn btn-primary" value="New subscription" />
+                        Sub name: <input type="text" name="newsub" /> <input type="submit" class="btn btn-primary" value="New PULL subscription" />
+                    </p>
+                </form>
+                <p></p>
+                <form asp-page-handler="newpushsub" method="post">
+                    <input type="hidden" value=@topic.TopicName.TopicId name="parenttopic">
+                    <p>
+                        Sub name: <input type="text" name="newsub" />  <input type="submit" class="btn btn-primary" value="New PUSH subscription" />
                     </p>
                 </form>
             </div>

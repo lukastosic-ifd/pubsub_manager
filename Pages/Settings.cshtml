@@ -6,16 +6,16 @@
 
 <form asp-page-handler="savesettings" method="post">
     <p>
-       Project name: <input type="text" asp-for="ConfigService.ProjectName" name="newproject" />
+       Project name: <input type="text" asp-for="ConfigService.ProjectName" name="newproject" style="min-width: 300px"/>
     </p>
     <p>
         Emulator: <input type="checkbox" asp-for="ConfigService.Emulator" name="newemulator"/>
     </p>
     <p>
-        Emulator URL: <input type="text" asp-for="ConfigService.EmulatorUrl" name="newemulatorurl"/>
+        Emulator URL: <input type="text" asp-for="ConfigService.EmulatorUrl" name="newemulatorurl" style="min-width: 300px"/>
     </p>
     <p>
-        Event destination URL: <input type="text" asp-for="ConfigService.EventDestinationUrl" name="newdestinationurl"/>
+        Event destination URL: <input type="text" asp-for="ConfigService.EventDestinationUrl" name="newdestinationurl" style="min-width: 300px"/>
     </p>
     <p>
         <input type="submit" class="btn btn-primary" value="Save changes" />
